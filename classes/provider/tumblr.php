@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth Tumblr Provider
  *
@@ -15,50 +16,53 @@
 
 namespace OAuth;
 
-class Provider_Tumblr extends Provider {
+class Provider_Tumblr extends Provider
+{
 
-	public $name = 'tumblr';
+    public $name = 'tumblr';
 
-	public function url_request_token()
-	{
-		return 'http://www.tumblr.com/oauth/request_token';
-	}
+    public function url_request_token()
+    {
+        return 'http://www.tumblr.com/oauth/request_token';
+    }
 
-	public function url_authorize()
-	{
-		return 'http://www.tumblr.com/oauth/authorize';
-	}
+    public function url_authorize()
+    {
+        return 'http://www.tumblr.com/oauth/authorize';
+    }
 
-	public function url_access_token()
-	{
-		return 'http://www.tumblr.com/oauth/access_token';
-	}
-	
-	public function get_user_info(Consumer $consumer, Token $token)
-	{
-		// Create a new GET request with the required parameters
-		$request = Request::forge('resource', 'GET', 'http://api.tumblr.com/v2/user/info', array(
-			'oauth_consumer_key' => $consumer->key,
-			'oauth_token' => $token->access_token,
-		));
+    public function url_access_token()
+    {
+        return 'http://www.tumblr.com/oauth/access_token';
+    }
 
-		// Sign the request using the consumer and token
-		$request->sign($this->signature, $consumer, $token);
+    public function get_user_info(Consumer $consumer, Token $token)
+    {
+        // Create a new GET request with the required parameters
+        $request = Request::forge('resource', 'GET', 'http://api.tumblr.com/v2/user/info', array(
+                    'oauth_consumer_key' => $consumer->key,
+                    'oauth_token' => $token->access_token,
+                ));
 
-		$response = json_decode($request->execute());
+        // Sign the request using the consumer and token
+        $request->sign($this->signature, $consumer, $token);
 
-		$status = current($response);
-		$response = next($response);
-		$user = $response->user;
-		
-		// Create a response from the request
-		return array(
-			'uid' => $user->name,    // Tumblr doesn't provide a unique key other than name
-			'name' => $user->name,
-			'likes' => $user->likes,
-			'following' => $user->following,
-			'default_post_format' => $user->default_post_format,
-		);
-	}
+        $response = json_decode($request->execute());
 
-} // End Provider_Tumblr
+        $status = current($response);
+        $response = next($response);
+        $user = $response->user;
+
+        // Create a response from the request
+        return array(
+            'uid' => $user->name, // Tumblr doesn't provide a unique key other than name
+            'name' => $user->name,
+            'likes' => $user->likes,
+            'following' => $user->following,
+            'default_post_format' => $user->default_post_format,
+        );
+    }
+
+}
+
+// End Provider_Tumblr

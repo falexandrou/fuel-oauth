@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth Server
  *
@@ -12,6 +13,9 @@
 
 namespace OAuth;
 
-abstract class Server {
+abstract class Server
+{
+    
+}
 
-} // End Server
+// End Server

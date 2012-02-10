@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth Credentials Request
  *
@@ -12,7 +13,9 @@
 
 namespace OAuth;
 
-class Request_Credentials extends Request {
+class Request_Credentials extends Request
+{
+    
+}
 
-
-} // End Request_Credentials
+// End Request_Credentials

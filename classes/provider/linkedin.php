@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth Twitter Provider
  *
@@ -18,50 +19,53 @@
 
 namespace OAuth;
 
-class Provider_Linkedin extends Provider {
+class Provider_Linkedin extends Provider
+{
 
-	public $name = 'linkedin';
+    public $name = 'linkedin';
 
-	public function url_request_token()
-	{
-		return 'https://api.linkedin.com/uas/oauth/requestToken';
-	}
+    public function url_request_token()
+    {
+        return 'https://api.linkedin.com/uas/oauth/requestToken';
+    }
 
-	public function url_authorize()
-	{
-		return 'https://api.linkedin.com/uas/oauth/authorize';
-	}
+    public function url_authorize()
+    {
+        return 'https://api.linkedin.com/uas/oauth/authorize';
+    }
 
-	public function url_access_token()
-	{
-		return 'https://api.linkedin.com/uas/oauth/accessToken';
-	}
-	
-	public function get_user_info(Consumer $consumer, Token $token)
-	{
-		// Create a new GET request with the required parameters
-		$url = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,headline,member-url-resources,picture-url,location,public-profile-url)';
-		$request = Request::forge('resource', 'GET', $url, array(
-			'oauth_consumer_key' => $consumer->key,
-			'oauth_token' => $token->access_token,
-		));
+    public function url_access_token()
+    {
+        return 'https://api.linkedin.com/uas/oauth/accessToken';
+    }
 
-		// Sign the request using the consumer and token
-		$request->sign($this->signature, $consumer, $token);
-		
-		$user = \Format::forge($request->execute(), 'xml')->to_array();
-		
-		// Create a response from the request
-		return array(
-			'uid' => $user['id'],
-			'name' => $user['first-name'].' '.$user['last-name'],
-			'nickname' => end(explode('/', $user['public-profile-url'])),
-			'description' => $user['headline'],
-			'location' => \Arr::get($user, 'location.name'),
-			'urls' => array(
-			  'Linked In' => $user['public-profile-url'],
-			),
-		);
-	}
+    public function get_user_info(Consumer $consumer, Token $token)
+    {
+        // Create a new GET request with the required parameters
+        $url = 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,headline,member-url-resources,picture-url,location,public-profile-url)';
+        $request = Request::forge('resource', 'GET', $url, array(
+                    'oauth_consumer_key' => $consumer->key,
+                    'oauth_token' => $token->access_token,
+                ));
 
-} // End Provider_Dropbox
+        // Sign the request using the consumer and token
+        $request->sign($this->signature, $consumer, $token);
+
+        $user = \Format::forge($request->execute(), 'xml')->to_array();
+
+        // Create a response from the request
+        return array(
+            'uid' => $user['id'],
+            'name' => $user['first-name'] . ' ' . $user['last-name'],
+            'nickname' => end(explode('/', $user['public-profile-url'])),
+            'description' => $user['headline'],
+            'location' => \Arr::get($user, 'location.name'),
+            'urls' => array(
+                'Linked In' => $user['public-profile-url'],
+            ),
+        );
+    }
+
+}
+
+// End Provider_Dropbox

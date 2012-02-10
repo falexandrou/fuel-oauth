@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth Request Token
  *
@@ -12,28 +13,31 @@
 
 namespace OAuth;
 
-class Token_Request extends Token {
+class Token_Request extends Token
+{
 
-	protected $name = 'request';
+    protected $name = 'request';
 
-	/**
-	 * @var  string  request token verifier
-	 */
-	protected $verifier;
+    /**
+     * @var  string  request token verifier
+     */
+    protected $verifier;
 
-	/**
-	 * Change the token verifier.
-	 *
-	 *     $token->verifier($key);
-	 *
-	 * @param   string   new verifier
-	 * @return  $this
-	 */
-	public function verifier($verifier)
-	{
-		$this->verifier = $verifier;
+    /**
+     * Change the token verifier.
+     *
+     *     $token->verifier($key);
+     *
+     * @param   string   new verifier
+     * @return  $this
+     */
+    public function verifier($verifier)
+    {
+        $this->verifier = $verifier;
 
-		return $this;
-	}
+        return $this;
+    }
 
-} // End Token_Request
+}
+
+// End Token_Request

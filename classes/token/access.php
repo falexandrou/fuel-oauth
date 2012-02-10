@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth Access Token
  *
@@ -12,8 +13,11 @@
 
 namespace OAuth;
 
-class Token_Access extends Token {
+class Token_Access extends Token
+{
 
-	protected $name = 'access';
+    protected $name = 'access';
 
-} // End Token_Access
+}
+
+// End Token_Access

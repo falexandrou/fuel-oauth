@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth Consumer
  *
@@ -14,98 +15,93 @@ namespace OAuth;
 
 class Consumer {
 
-	/**
-	 * Create a new consumer object.
-	 *
-	 *     $consumer = Consumer::forge($options);
-	 *
-	 * @param   array  consumer options, key and secret are required
-	 * @return  Consumer
-	 */
-	public static function forge(array $options = NULL)
-	{
-		return new static($options);
-	}
+    /**
+     * Create a new consumer object.
+     *
+     *     $consumer = Consumer::forge($options);
+     *
+     * @param   array  consumer options, key and secret are required
+     * @return  Consumer
+     */
+    public static function forge(array $options = NULL) {
+        return new static($options);
+    }
 
-	/**
-	 * @var  string  consumer key
-	 */
-	protected $key;
+    /**
+     * @var  string  consumer key
+     */
+    protected $key;
 
-	/**
-	 * @var  string  consumer secret
-	 */
-	protected $secret;
+    /**
+     * @var  string  consumer secret
+     */
+    protected $secret;
 
-	/**
-	 * @var  string  callback URL for OAuth authorization completion
-	 */
-	protected $callback;
+    /**
+     * @var  string  callback URL for OAuth authorization completion
+     */
+    protected $callback;
 
-	/**
-	 * @var  string  scope for OAuth authorization completion
-	 */
-	protected $scope;
+    /**
+     * @var  string  scope for OAuth authorization completion
+     */
+    protected $scope;
 
-	/**
-	 * Sets the consumer key and secret.
-	 *
-	 * @param   array  consumer options, key and secret are required
-	 * @return  void
-	 */
-	public function __construct(array $options = NULL)
-	{
-		if (empty($options['key']))
-		{
-			throw new Exception('Required option not provided: key');
-		}
+    /**
+     * Sets the consumer key and secret.
+     *
+     * @param   array  consumer options, key and secret are required
+     * @return  void
+     */
+    public function __construct(array $options = NULL) {
+        if (empty($options['key'])) {
+            throw new Exception('Required option not provided: key');
+        }
 
-/* TODO Erm? YouTube doesnt need this 
-		if ( ! isset($options['secret']))
-		{
-			throw new Exception('Required option not provided: secret');
-		}
-*/
-		$this->key = $options['key'];
+        /* TODO Erm? YouTube doesnt need this 
+          if ( ! isset($options['secret']))
+          {
+          throw new Exception('Required option not provided: secret');
+          }
+         */
+        $this->key = $options['key'];
 
-		$this->secret = $options['secret'];
+        $this->secret = $options['secret'];
 
-		if (isset($options['callback']))
-		{
-			$this->callback = $options['callback'];
-		}
-		
-		if (isset($options['scope']))
-		{
-			$this->scope = $options['scope'];
-		}
-	}
+        if (isset($options['callback'])) {
+            $this->callback = $options['callback'];
+        }
 
-	/**
-	 * Return the value of any protected class variable.
-	 *
-	 *     // Get the consumer key
-	 *     $key = $consumer->key;
-	 *
-	 * @param   string  variable name
-	 * @return  mixed
-	 */
-	public function __get($key)
-	{
-		return $this->$key;
-	}
+        if (isset($options['scope'])) {
+            $this->scope = $options['scope'];
+        }
+    }
 
-	/**
-	 * Change the consumer callback.
-	 *
-	 * @param   string  new consumer callback
-	 * @return  $this
-	 */
-	public function callback($callback)
-	{
-		$this->callback = $callback;
+    /**
+     * Return the value of any protected class variable.
+     *
+     *     // Get the consumer key
+     *     $key = $consumer->key;
+     *
+     * @param   string  variable name
+     * @return  mixed
+     */
+    public function __get($key) {
+        return $this->$key;
+    }
 
-		return $this;
-	}
+    /**
+     * Change the consumer callback.
+     *
+     * @param   string  new consumer callback
+     * @return  $this
+     */
+    public function callback($callback) {
+        $this->callback = $callback;
 
-} // End Consumer
+        return $this;
+    }
+
+}
+
+// End Consumer

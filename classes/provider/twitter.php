@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth Twitter Provider
  *
@@ -18,54 +19,56 @@
 
 namespace OAuth;
 
-class Provider_Twitter extends Provider {
+class Provider_Twitter extends Provider
+{
 
-	public $name = 'twitter';
-	
-	public $uid_key = 'user_id';
+    public $name = 'twitter';
+    public $uid_key = 'user_id';
 
-	public function url_request_token()
-	{
-		return 'https://api.twitter.com/oauth/request_token';
-	}
+    public function url_request_token()
+    {
+        return 'https://api.twitter.com/oauth/request_token';
+    }
 
-	public function url_authorize()
-	{
-		return 'https://api.twitter.com/oauth/authenticate';
-	}
+    public function url_authorize()
+    {
+        return 'https://api.twitter.com/oauth/authenticate';
+    }
 
-	public function url_access_token()
-	{
-		return 'https://api.twitter.com/oauth/access_token';
-	}
-	
-	public function get_user_info(Consumer $consumer, Token $token)
-	{		
-		// Create a new GET request with the required parameters
-		$request = Request::forge('resource', 'GET', 'http://api.twitter.com/1/users/lookup.json', array(
-			'oauth_consumer_key' => $consumer->key,
-			'oauth_token' => $token->access_token,
-			'user_id' => $token->uid,
-		));
+    public function url_access_token()
+    {
+        return 'https://api.twitter.com/oauth/access_token';
+    }
 
-		// Sign the request using the consumer and token
-		$request->sign($this->signature, $consumer, $token);
+    public function get_user_info(Consumer $consumer, Token $token)
+    {
+        // Create a new GET request with the required parameters
+        $request = Request::forge('resource', 'GET', 'http://api.twitter.com/1/users/lookup.json', array(
+                    'oauth_consumer_key' => $consumer->key,
+                    'oauth_token' => $token->access_token,
+                    'user_id' => $token->uid,
+                ));
 
-		$user = current(json_decode($request->execute()));
-		
-		// Create a response from the request
-		return array(
-			'uid' => $token->uid,
-			'nickname' => $user->screen_name,
-			'name' => $user->name ?: $user->screen_name,
-			'location' => $user->location,
-			'image' => $user->profile_image_url,
-			'description' => $user->description,
-			'urls' => array(
-			  'Website' => $user->url,
-			  'Twitter' => 'http://twitter.com/'.$user->screen_name,
-			),
-		);
-	}
+        // Sign the request using the consumer and token
+        $request->sign($this->signature, $consumer, $token);
 
-} // End Provider_Twitter
+        $user = current(json_decode($request->execute()));
+
+        // Create a response from the request
+        return array(
+            'uid' => $token->uid,
+            'nickname' => $user->screen_name,
+            'name' => $user->name ? : $user->screen_name,
+            'location' => $user->location,
+            'image' => $user->profile_image_url,
+            'description' => $user->description,
+            'urls' => array(
+                'Website' => $user->url,
+                'Twitter' => 'http://twitter.com/' . $user->screen_name,
+            ),
+        );
+    }
+
+}
+
+// End Provider_Twitter
