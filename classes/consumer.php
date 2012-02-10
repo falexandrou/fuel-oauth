@@ -13,7 +13,8 @@
 
 namespace OAuth;
 
-class Consumer {
+class Consumer
+{
 
     /**
      * Create a new consumer object.
@@ -23,7 +24,8 @@ class Consumer {
      * @param   array  consumer options, key and secret are required
      * @return  Consumer
      */
-    public static function forge(array $options = NULL) {
+    public static function forge(array $options = NULL)
+    {
         return new static($options);
     }
 
@@ -53,7 +55,8 @@ class Consumer {
      * @param   array  consumer options, key and secret are required
      * @return  void
      */
-    public function __construct(array $options = NULL) {
+    public function __construct(array $options = NULL)
+    {
         if (empty($options['key'])) {
             throw new Exception('Required option not provided: key');
         }
@@ -86,7 +89,8 @@ class Consumer {
      * @param   string  variable name
      * @return  mixed
      */
-    public function __get($key) {
+    public function __get($key)
+    {
         return $this->$key;
     }
 
@@ -96,7 +100,8 @@ class Consumer {
      * @param   string  new consumer callback
      * @return  $this
      */
-    public function callback($callback) {
+    public function callback($callback)
+    {
         $this->callback = $callback;
 
         return $this;
