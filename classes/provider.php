@@ -16,6 +16,16 @@ namespace OAuth;
 abstract class Provider
 {
 
+    public $request_url = null;
+    public $access_url = null;
+    public $authorize_url = null;
+    
+    public static $_autoset = array(
+        'request_url',
+        'access_url',
+        'authorize_url',
+    );
+
     /**
      * Create a new provider.
      *
@@ -79,6 +89,12 @@ abstract class Provider
         if (!is_object($this->signature)) {
             // Convert the signature name into an object
             $this->signature = Signature::forge($this->signature);
+        }
+        
+        foreach (static::$_autoset as $attr) {
+            if (isset($options[$attr])) {
+                $this->{$attr} = $options[$attr];
+            }
         }
 
         if (!$this->name) {
