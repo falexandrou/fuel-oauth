@@ -29,7 +29,6 @@ abstract class Provider
     public static function forge($name, array $options = NULL)
     {
         $class = '\\OAuth\\Provider_' . \Inflector::classify($name);
-
         return new $class($options);
     }
 
@@ -151,7 +150,9 @@ abstract class Provider
     public function request_token(Consumer $consumer, array $params = NULL)
     {
         // Create a new GET request for a request token with the required parameters
-        $request = Request::forge('token', 'GET', $this->url_request_token(), array(
+        $request_url = $this->request_url !== null ? $this->request_url : $this->url_request_token();
+
+        $request = Request::forge('token', 'GET', $request_url, array(
                     'oauth_consumer_key' => $consumer->key,
                     'oauth_callback' => $consumer->callback,
                     'scope' => is_array($consumer->scope) ? implode($this->scope_seperator, $consumer->scope) : $consumer->scope,
@@ -187,7 +188,8 @@ abstract class Provider
     public function authorize_url(Token_Request $token, array $params = NULL)
     {
         // Create a new GET request for a request token with the required parameters
-        $request = Request::forge('authorize', 'GET', $this->url_authorize(), array(
+        $authorize_url = $this->authorize_url !== null ? $this->authorize_url : $this->url_authorize();
+        $request = Request::forge('authorize', 'GET', $authorize_url, array(
                     'oauth_token' => $token->access_token,
                 ));
 
@@ -212,7 +214,8 @@ abstract class Provider
     public function access_token(Consumer $consumer, Token_Request $token, array $params = NULL)
     {
         // Create a new GET request for a request token with the required parameters
-        $request = Request::forge('access', 'GET', $this->url_access_token(), array(
+        $access_url = $this->access_url !== null ? $this->access_url : $this->url_access_token();
+        $request = Request::forge('access', 'GET', $access_url, array(
                     'oauth_consumer_key' => $consumer->key,
                     'oauth_token' => $token->access_token,
                     'oauth_verifier' => $token->verifier,
@@ -236,7 +239,7 @@ abstract class Provider
                     'uid' => $response->param($this->uid_key) ? : \Input::get_post($this->uid_key),
                 ));
     }
-
+    
 }
 
 // End Provider
