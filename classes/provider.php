@@ -15,6 +15,20 @@ namespace OAuth;
 
 abstract class Provider
 {
+    public $request_url = null;
+    public $access_url = null;
+    public $authorize_url = null;
+    public $account_info_url = null;
+    
+    public static $_autoset = array(
+        'request_url',
+        'access_url',
+        'authorize_url',
+        'account_info_url',
+    );
+    
+    public $consumer = null;
+
 
     public $request_url = null;
     public $access_url = null;
@@ -85,7 +99,7 @@ abstract class Provider
             // Set the signature method name or object
             $this->signature = $options['signature'];
         }
-
+        
         if (!is_object($this->signature)) {
             // Convert the signature name into an object
             $this->signature = Signature::forge($this->signature);
@@ -101,6 +115,27 @@ abstract class Provider
             // Attempt to guess the name from the class name
             $this->name = strtolower(substr(get_class($this), strlen('Provider_')));
         }
+        
+        foreach (static::$_autoset as $attr) {
+            if (isset($options[$attr])) {
+                $this->{$attr} = $options[$attr];
+            }
+        }
+        
+        $key = \Fuel\Core\Config::get($this->name.'.app_key');
+        $secret = \Fuel\Core\Config::get($this->name.'.app_secret');
+        
+        if ($key === null || $secret === null) {
+            throw new \Fuel\Core\Fuel_Exception('Config '.$this->name.'.php either doesn\'t exist or doesn\'t contain app_key & app_secret');
+        }
+        
+        $this->consumer = Consumer::forge(array(
+            'key' => $key,
+            'secret' => $secret,
+            'callback' => \Fuel\Core\Uri::current(),
+        ));
+
+        
     }
 
     /**
@@ -151,7 +186,7 @@ abstract class Provider
      *
      * @return  string
      */
-    abstract public function get_user_info(Consumer $consumer, Token $token);
+    abstract public function get_user_info(Token $token);
 
     /**
      * Ask for a request token from the OAuth provider.
@@ -163,15 +198,15 @@ abstract class Provider
      * @return  Token_Request
      * @uses    Request_Token
      */
-    public function request_token(Consumer $consumer, array $params = NULL)
+    public function request_token(array $params = NULL)
     {
         // Create a new GET request for a request token with the required parameters
         $request_url = $this->request_url !== null ? $this->request_url : $this->url_request_token();
 
         $request = Request::forge('token', 'GET', $request_url, array(
-                    'oauth_consumer_key' => $consumer->key,
-                    'oauth_callback' => $consumer->callback,
-                    'scope' => is_array($consumer->scope) ? implode($this->scope_seperator, $consumer->scope) : $consumer->scope,
+                    'oauth_consumer_key' => $this->consumer->key,
+                    'oauth_callback' => $this->consumer->callback,
+                    'scope' => is_array($this->consumer->scope) ? implode($this->scope_seperator, $this->consumer->scope) : $this->consumer->scope,
                 ));
 
         if ($params) {
@@ -180,7 +215,7 @@ abstract class Provider
         }
 
         // Sign the request using only the consumer, no token is available yet
-        $request->sign($this->signature, $consumer);
+        $request->sign($this->signature, $this->consumer);
 
         // Create a response from the request
         $response = $request->execute();
@@ -227,12 +262,12 @@ abstract class Provider
      * @param   array                additional request parameters
      * @return  Token_Access
      */
-    public function access_token(Consumer $consumer, Token_Request $token, array $params = NULL)
+    public function access_token(Token_Request $token, array $params = NULL)
     {
         // Create a new GET request for a request token with the required parameters
         $access_url = $this->access_url !== null ? $this->access_url : $this->url_access_token();
         $request = Request::forge('access', 'GET', $access_url, array(
-                    'oauth_consumer_key' => $consumer->key,
+                    'oauth_consumer_key' => $this->consumer->key,
                     'oauth_token' => $token->access_token,
                     'oauth_verifier' => $token->verifier,
                 ));
@@ -243,7 +278,7 @@ abstract class Provider
         }
 
         // Sign the request using only the consumer, no token is available yet
-        $request->sign($this->signature, $consumer, $token);
+        $request->sign($this->signature, $this->consumer, $token);
 
         // Create a response from the request
         $response = $request->execute();

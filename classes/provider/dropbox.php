@@ -39,16 +39,16 @@ class Provider_Dropbox extends Provider
         return 'https://api.dropbox.com/1/oauth/access_token';
     }
 
-    public function get_user_info(Consumer $consumer, Token $token)
+    public function get_user_info(Token $token)
     {
         // Create a new GET request with the required parameters
         $request = Request::forge('resource', 'GET', 'https://api.dropbox.com/1/account/info', array(
-                    'oauth_consumer_key' => $consumer->key,
+                    'oauth_consumer_key' => $this->consumer->key,
                     'oauth_token' => $token->access_token,
                 ));
 
         // Sign the request using the consumer and token
-        $request->sign($this->signature, $consumer, $token);
+        $request->sign($this->signature, $this->consumer, $token);
 
         $user = json_decode($request->execute());
 
