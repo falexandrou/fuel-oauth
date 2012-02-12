@@ -30,16 +30,6 @@ abstract class Provider
     public $consumer = null;
 
 
-    public $request_url = null;
-    public $access_url = null;
-    public $authorize_url = null;
-    
-    public static $_autoset = array(
-        'request_url',
-        'access_url',
-        'authorize_url',
-    );
-
     /**
      * Create a new provider.
      *
